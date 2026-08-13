@@ -1,21 +1,30 @@
-# BrightDeck MCP Server
+# BrightDeck Integrations
 
-**Create polished, PowerPoint-ready presentations from any LLM client.**
+**Create polished, PowerPoint-ready presentations from ChatGPT, Claude, Zapier, n8n — or any MCP client.**
 
-BrightDeck is a hosted [Model Context Protocol](https://modelcontextprotocol.io/) server that lets ChatGPT, Claude, and other MCP-compatible clients generate, edit, share, and export professional decks on your behalf. Ask your AI assistant to "draft a 10-slide pitch deck about my Series A," and BrightDeck builds a real, branded, exportable presentation — no manual slide-by-slide work, no template hunting.
+[BrightDeck](https://brightdeck.ai/) is an AI presentation maker: ask for "a 10-slide pitch deck about my Series A" and get a real, branded, exportable presentation — no manual slide-by-slide work, no template hunting. This repository documents every way to connect it.
 
-Learn more at [brightdeck.ai](https://brightdeck.ai/).
+| Platform | Fastest path |
+|---|---|
+| **ChatGPT** | [Install the BrightDeck app](https://chatgpt.com/plugins/plugin_asdk_app_6a090196cf008191b1333063eea54038) — one click, no setup |
+| **Claude Code** | `claude mcp add --transport http brightdeck https://api.brightdeck.ai/mcp` |
+| **Claude Desktop** | [Add a custom connector](#claude-desktop) |
+| **Zapier** | [BrightDeck on Zapier](#zapier) — connect 7,000+ apps, no code |
+| **n8n** | [Community node or built-in MCP client](#n8n) |
+| **Any other MCP client** | Server URL: `https://api.brightdeck.ai/mcp` |
+
+At the core is a hosted [Model Context Protocol](https://modelcontextprotocol.io/) server. The Zapier and n8n integrations speak the same MCP API under the hood — one account, one OAuth sign-in, no API keys anywhere.
 
 ---
 
-> **Before you start:** BrightDeck MCP requires a free brightdeck.ai account.
-> [Sign up here](https://brightdeck.ai/) before connecting any client — otherwise the OAuth handshake will fail with *"No deck account is linked to this Firebase identity."*
+> **Before you start:** every integration requires a free brightdeck.ai account.
+> [Sign up here](https://brightdeck.ai/) before connecting — otherwise the OAuth handshake will fail with *"No deck account is linked to this Firebase identity."*
 
 ---
 
-## Quick start
+## AI assistants (MCP)
 
-**Server URL:** `https://api.brightdeck.ai/mcp`
+### Quick start
 
 Run one command:
 
@@ -28,10 +37,6 @@ The script auto-configures [Claude Code](#claude-code) if it's installed, and pr
 Want to inspect it first? Open [install.sh on GitHub](https://github.com/brightdeck/mcp/blob/main/install.sh).
 
 Prefer to configure manually? Pick your client below.
-
----
-
-## Install
 
 ### Claude Code
 
@@ -63,28 +68,72 @@ claude mcp list
 
 ### ChatGPT
 
-Custom MCP connectors require **ChatGPT Pro, Plus, Business, or Enterprise** with **Developer Mode** enabled.
+**Install the app (recommended):** open the [BrightDeck app in ChatGPT](https://chatgpt.com/plugins/plugin_asdk_app_6a090196cf008191b1333063eea54038) and add it. The first time it runs, sign in with your brightdeck.ai account. No Developer Mode required.
 
-1. Open **Settings → Advanced → Developer mode**, and turn it on.
-2. Go to **Settings → Connectors** and click **Add custom connector**.
-3. Enter:
-   - **Name:** `BrightDeck`
-   - **URL:** `https://api.brightdeck.ai/mcp`
-4. Complete the OAuth flow in the popup.
-5. In a new chat, click **+ → More → Developer mode** and toggle **BrightDeck** on.
+**Or add a custom MCP connector** (requires ChatGPT **Pro, Plus, Business, or Enterprise** with Developer Mode):
+
+1. Turn on **Settings → Advanced → Developer mode**.
+2. Go to **Settings → Connectors**, click **Add custom connector**, and enter name `BrightDeck`, URL `https://api.brightdeck.ai/mcp`.
+3. Complete the OAuth flow, then toggle **BrightDeck** on under **+ → More → Developer mode** in a new chat.
+
+---
+
+## Automation platforms
+
+### Zapier
+
+The BrightDeck integration on [Zapier](https://zapier.com/apps) connects your account to 7,000+ apps. Add a BrightDeck step in the Zap editor, click **Sign in**, and approve access on the BrightDeck consent page — the connection is labeled with your account email, tokens refresh automatically, and you can revoke it anytime from your BrightDeck account settings.
+
+| Type | Operation | What it does |
+|---|---|---|
+| Trigger | **New Presentation** | Fires when a presentation is created (polling). Fires on *creation* — pair with **Get Generation Status** if you need the finished deck. |
+| Action | **Create AI Presentation** | Generates a deck from a prompt (up to 4,000 characters). Optional: slide count (1–50, plan caps apply), style, content density. Returns immediately with `presentation_id` and a live `view_url` while slides build in the background. |
+| Action | **Export PPTX / Export PDF** | Returns a real Zapier **File** (map it into Gmail, Slack, Drive, etc.) plus a signed `download_url`. |
+| Action | **Share Presentation** | Shares a deck by email with a role (Viewer → Owner). Non-users get an email invitation that grants the role on signup. |
+| Search | **Find Presentation** | Exact lookup by ID, or case-insensitive title search over your 50 most recent decks. Returns nothing (not an error) on no match, so "create if not found" flows work. |
+| Search | **Get Generation Status** | Live status of an AI generation run: `status`, `stage`, slides finished vs. planned, failure detail. |
+
+**The generate-then-export pattern** — Create AI Presentation returns in seconds while the deck builds for a few minutes. To act on the *finished* deck: **Create AI Presentation** → **Delay** (3–5 min) → **Get Generation Status** → **Filter** (`status` exactly `completed`) → **Export / Share**.
+
+Things to know:
+
+- **Export links expire in 60 minutes.** For anything downstream, map the **File** field instead of `download_url` — Zapier fetches and stores it at run time.
+- **Plan limits surface as Zap errors** with the billing message, rather than silently returning nothing.
+- **`filename` is the title.** The API calls a presentation's title `filename`.
+
+### n8n
+
+Two ways to use BrightDeck from n8n:
+
+**Community node — [A.I. Slides by Brightdeck](https://www.npmjs.com/package/@brightdeck/n8n-nodes-ai-slides).** On self-hosted n8n: **Settings → Community Nodes → Install** and enter `@brightdeck/n8n-nodes-ai-slides`. Twelve operations covering create, manage, share, and export, with credentials handled via OAuth sign-in.
+
+**Zero code — built-in MCP Client Tool** (works on n8n Cloud and self-hosted n8n ≥ 2.28.0):
+
+1. Attach an **MCP Client Tool** sub-node to an AI Agent (or use the standalone **MCP Client** node).
+2. **Endpoint:** `https://api.brightdeck.ai/mcp/` — **Authentication:** **MCP OAuth2** (leave Resource URL empty).
+3. Click **Connect** and sign in. No client ID, secret, or scopes to fill in.
+
+> ⚠️ The MCP Client Tool's per-call **Timeout** defaults to 60 s; `deck_create_presentation` runs 30–120 s. Set **Options → Timeout** to **180000** ms or the call aborts mid-generation.
+
+**Generate → wait → export:** `deck_create_presentation` (returns `presentation_id`, `task_id`, live `view_url`) → poll `deck_get_task_status` until `completed` (a 15–30 s Wait node between polls is plenty) → `deck_export_pptx_url` / `deck_export_pdf_url`.
+
+Skip `mode: "interactive"` and the `deck_answer_questions` / `deck_approve_plan` tools in workflows — they pause server-side for a human answer, which is built for chat agents, not unattended automation.
 
 ---
 
 ## What you can do
 
-BrightDeck exposes 11 tools, grouped by what you actually want to do:
+BrightDeck exposes 15 MCP tools, grouped by what you actually want to do:
 
 ### Generate
 
 | Tool | Use it to... |
 |---|---|
-| `deck_create_presentation` | Generate a complete, themed deck from a prompt — optionally seeded with reference files (PDF, PPTX, DOCX, images). Returns a live preview link immediately while generation continues in the background. |
+| `deck_create_presentation` | Generate a complete, themed deck from a prompt. Returns a live preview link immediately while generation continues in the background. |
+| `deck_create_presentation_v2` | Same, seeded with uploaded reference files (up to five: PDF, PPTX, DOCX, images). |
 | `deck_create_blank_presentation` | Create an empty deck to edit from scratch. Useful when you want to build slide-by-slide. |
+| `deck_get_task_status` | Check a background generation run: status, stage, slides finished vs. planned. |
+| `deck_answer_questions` / `deck_approve_plan` | Power the interactive create flow (clarifying questions, then plan approval). Built for chat clients — skip them in unattended automations. |
 
 ### Manage
 
@@ -131,7 +180,7 @@ BrightDeck uses **OAuth 2.1 with PKCE** ([RFC 7636](https://datatracker.ietf.org
 - `https://api.brightdeck.ai/.well-known/oauth-protected-resource`
 - `https://api.brightdeck.ai/.well-known/jwks.json`
 
-Claude Code, Claude Desktop, and ChatGPT handle the OAuth handshake automatically — you only see a browser sign-in. Tokens are short-lived JWTs (ES256) and refresh transparently.
+Every client — ChatGPT, Claude, Zapier, and n8n alike — handles the OAuth handshake automatically against the same authorization server; you only see a browser sign-in. Tokens are short-lived JWTs (ES256) and refresh transparently.
 
 Tools require one of these scopes, which your client requests automatically:
 
@@ -149,7 +198,7 @@ Tools require one of these scopes, which your client requests automatically:
 You signed in with a Google/email account that hasn't been registered at brightdeck.ai. Visit [brightdeck.ai](https://brightdeck.ai/), sign up with the same email, then retry the connection.
 
 **ChatGPT doesn't show my connector option.**
-Custom connectors require ChatGPT **Pro, Plus, Business, or Enterprise** and **Developer Mode** enabled (Settings → Advanced → Developer mode).
+Custom connectors require ChatGPT **Pro, Plus, Business, or Enterprise** and **Developer Mode** enabled (Settings → Advanced → Developer mode). Or skip that entirely and [install the BrightDeck app](https://chatgpt.com/plugins/plugin_asdk_app_6a090196cf008191b1333063eea54038) instead.
 
 **The OAuth browser tab never returns.**
 Pop-ups may be blocked. Allow pop-ups for `api.brightdeck.ai` and your client's domain (e.g. `claude.ai`, `chatgpt.com`), then retry.
