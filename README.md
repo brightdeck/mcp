@@ -7,8 +7,7 @@
 | Platform | Fastest path |
 |---|---|
 | **ChatGPT** | [Install the BrightDeck app](https://chatgpt.com/plugins/plugin_asdk_app_6a090196cf008191b1333063eea54038) — one click, no setup |
-| **Claude Code** | `claude mcp add --transport http brightdeck https://api.brightdeck.ai/mcp` |
-| **Claude Desktop** | [Add a custom connector](#claude-desktop) |
+| **Claude** | [Install the Brightdeck connector](https://claude.ai/new#settings/customize-connectors/directory/brightdeck-ai) — one click, works in claude.ai, Claude Desktop & Claude Code |
 | **Zapier** | [BrightDeck on Zapier](#zapier) — connect 7,000+ apps, no code |
 | **n8n** | [Community node or built-in MCP client](#n8n) |
 | **Any other MCP client** | Server URL: `https://api.brightdeck.ai/mcp` |
@@ -24,47 +23,17 @@ At the core is a hosted [Model Context Protocol](https://modelcontextprotocol.io
 
 ## AI assistants (MCP)
 
-### Quick start
+### Claude
 
-Run one command:
+**Install the connector (recommended):** open the [Brightdeck connector in the Claude directory](https://claude.ai/new#settings/customize-connectors/directory/brightdeck-ai), click **Connect**, and sign in with your brightdeck.ai account. That covers claude.ai and Claude Desktop — and connectors installed there are also available in Claude Code when you're signed in with the same account.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/brightdeck/mcp/main/install.sh | bash
-```
-
-The script auto-configures [Claude Code](#claude-code) if it's installed, and prints copy-paste setup for [Claude Desktop](#claude-desktop) and [ChatGPT](#chatgpt). It never edits config files for you and never asks for sudo.
-
-Want to inspect it first? Open [install.sh on GitHub](https://github.com/brightdeck/mcp/blob/main/install.sh).
-
-Prefer to configure manually? Pick your client below.
-
-### Claude Code
-
-Run one command:
+**Or register the MCP server directly in Claude Code:**
 
 ```bash
 claude mcp add --transport http brightdeck https://api.brightdeck.ai/mcp
 ```
 
-The first time you call a BrightDeck tool, Claude Code opens a browser tab to complete the OAuth handshake. Sign in with the account you used at brightdeck.ai. That's it.
-
-Verify the server is registered:
-
-```bash
-claude mcp list
-```
-
-### Claude Desktop
-
-1. Open **Settings → Connectors**.
-2. Click **Add custom connector**.
-3. Enter:
-   - **Name:** `BrightDeck`
-   - **URL:** `https://api.brightdeck.ai/mcp`
-4. Click **Connect**. A browser tab opens for OAuth — sign in with your brightdeck.ai account.
-5. Back in Claude Desktop, toggle the connector **on** in the conversation's `+` menu.
-
-> Claude Desktop requires the server to be reachable from Anthropic's IP ranges. BrightDeck's hosted endpoint already is, so no firewall changes are needed.
+The first time you call a BrightDeck tool, Claude Code opens a browser tab to complete the OAuth handshake. Sign in with the account you used at brightdeck.ai. Verify with `claude mcp list`.
 
 ### ChatGPT
 
@@ -75,6 +44,16 @@ claude mcp list
 1. Turn on **Settings → Advanced → Developer mode**.
 2. Go to **Settings → Connectors**, click **Add custom connector**, and enter name `BrightDeck`, URL `https://api.brightdeck.ai/mcp`.
 3. Complete the OAuth flow, then toggle **BrightDeck** on under **+ → More → Developer mode** in a new chat.
+
+### Other MCP clients
+
+Point any MCP-compatible client at `https://api.brightdeck.ai/mcp` (HTTP transport, OAuth handled automatically). Or run the setup script, which auto-configures Claude Code if installed and prints copy-paste steps for everything else — it never edits config files for you and never asks for sudo:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/brightdeck/mcp/main/install.sh | bash
+```
+
+Want to inspect it first? Open [install.sh on GitHub](https://github.com/brightdeck/mcp/blob/main/install.sh).
 
 ---
 

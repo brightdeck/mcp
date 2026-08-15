@@ -74,9 +74,12 @@ echo
 
 # ---- Claude Desktop -----------------------------------------------------------
 
-bold "2. Claude Desktop"
+bold "2. Claude (claude.ai + Claude Desktop)"
 cat <<EOF
-  Open Claude Desktop and:
+  Fastest: install the Brightdeck connector from the Claude directory:
+    https://claude.ai/new#settings/customize-connectors/directory/brightdeck-ai
+
+  Or add it manually in Claude Desktop:
     1. Go to Settings -> Connectors
     2. Click "Add custom connector"
     3. Name:  BrightDeck
@@ -90,7 +93,11 @@ echo
 
 bold "3. ChatGPT"
 cat <<EOF
-  Requires ChatGPT Pro, Plus, Business, or Enterprise.
+  Fastest: install the BrightDeck app (no Developer Mode needed):
+    https://chatgpt.com/plugins/plugin_asdk_app_6a090196cf008191b1333063eea54038
+
+  Or add a custom MCP connector (requires ChatGPT Pro, Plus, Business,
+  or Enterprise):
 
     1. Settings -> Advanced -> turn on Developer mode
     2. Settings -> Connectors -> "Add custom connector"
