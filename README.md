@@ -8,7 +8,7 @@
 |---|---|
 | **ChatGPT** | [Install the BrightDeck app](https://chatgpt.com/plugins/plugin_asdk_app_6a090196cf008191b1333063eea54038) — one click, no setup |
 | **Claude** | [Install the Brightdeck connector](https://claude.ai/new#settings/customize-connectors/directory/brightdeck-ai) — one click, works in claude.ai, Claude Desktop & Claude Code |
-| **Zapier** | [BrightDeck on Zapier](#zapier) — connect 7,000+ apps, no code |
+| **Zapier** | [BrightDeck on Zapier](https://zapier.com/apps/brightdeck/integrations) — connect 7,000+ apps, no code |
 | **n8n** | [Community node or built-in MCP client](#n8n) |
 | **Any other MCP client** | Server URL: `https://api.brightdeck.ai/mcp` |
 
@@ -61,7 +61,7 @@ Want to inspect it first? Open [install.sh on GitHub](https://github.com/brightd
 
 ### Zapier
 
-The BrightDeck integration on [Zapier](https://zapier.com/apps) connects your account to 7,000+ apps. Add a BrightDeck step in the Zap editor, click **Sign in**, and approve access on the BrightDeck consent page — the connection is labeled with your account email, tokens refresh automatically, and you can revoke it anytime from your BrightDeck account settings.
+The [BrightDeck integration on Zapier](https://zapier.com/apps/brightdeck/integrations) connects your account to 7,000+ apps. Open the listing and click **Connect BrightDeck** (or add a BrightDeck step in the Zap editor), click **Sign in**, and approve access on the BrightDeck consent page — the connection is labeled with your account email, tokens refresh automatically, and you can revoke it anytime from your BrightDeck account settings.
 
 | Type | Operation | What it does |
 |---|---|---|
@@ -79,6 +79,7 @@ Things to know:
 - **Export links expire in 60 minutes.** For anything downstream, map the **File** field instead of `download_url` — Zapier fetches and stores it at run time.
 - **Plan limits surface as Zap errors** with the billing message, rather than silently returning nothing.
 - **`filename` is the title.** The API calls a presentation's title `filename`.
+- **API reference.** Every Zapier operation is an MCP tool call under the hood; the full endpoint and field reference is at [brightdeck.ai/zapier-api-docs](https://brightdeck.ai/zapier-api-docs).
 
 ### n8n
 
