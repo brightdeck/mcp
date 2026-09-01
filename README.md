@@ -9,7 +9,7 @@
 | **ChatGPT** | [Install the BrightDeck app](https://chatgpt.com/plugins/plugin_asdk_app_6a090196cf008191b1333063eea54038) — one click, no setup |
 | **Claude** | [Install the Brightdeck connector](https://claude.ai/new#settings/customize-connectors/directory/brightdeck-ai) — one click, works in claude.ai, Claude Desktop & Claude Code |
 | **Zapier** | [BrightDeck on Zapier](https://zapier.com/apps/brightdeck/integrations) — connect 7,000+ apps, no code |
-| **n8n** | [Community node or built-in MCP client](#n8n) |
+| **n8n** | [A.I. Slides by Brightdeck](https://n8n.io/integrations/ai-slides-by-brightdeck/) — or the [built-in MCP client](#n8n) |
 | **Any other MCP client** | Server URL: `https://api.brightdeck.ai/mcp` |
 
 At the core is a hosted [Model Context Protocol](https://modelcontextprotocol.io/) server. The Zapier and n8n integrations speak the same MCP API under the hood — one account, one OAuth sign-in, no API keys anywhere.
@@ -85,7 +85,7 @@ Things to know:
 
 Two ways to use BrightDeck from n8n:
 
-**Community node — [A.I. Slides by Brightdeck](https://www.npmjs.com/package/@brightdeck/n8n-nodes-ai-slides).** On self-hosted n8n: **Settings → Community Nodes → Install** and enter `@brightdeck/n8n-nodes-ai-slides`. Twelve operations covering create, manage, share, and export, with credentials handled via OAuth sign-in.
+**Community node — [A.I. Slides by Brightdeck](https://n8n.io/integrations/ai-slides-by-brightdeck/)**, verified by n8n and listed in the public integrations directory. Search for **Brightdeck** in the editor's nodes panel (verified nodes need a quick enable by the instance owner first); on self-hosted n8n you can also install via **Settings → Community Nodes → Install** with [`@brightdeck/n8n-nodes-ai-slides`](https://www.npmjs.com/package/@brightdeck/n8n-nodes-ai-slides). Twelve operations covering create, manage, share, and export, with credentials handled via OAuth sign-in.
 
 **Zero code — built-in MCP Client Tool** (works on n8n Cloud and self-hosted n8n ≥ 2.28.0):
 
